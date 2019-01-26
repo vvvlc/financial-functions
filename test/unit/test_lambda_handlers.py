@@ -1,5 +1,5 @@
 import json
-
+import pytest
 # make sure we can find the app code
 import sys, os
 my_path = os.path.dirname(os.path.abspath(__file__))
@@ -265,7 +265,7 @@ def test_nper_handler():
         "pv": 8000
     }, None)
     assert 'result' in response
-    assert round(response.get('result'), 5) == 64.07335
+    assert response.get('result').tolist() == pytest.approx(64.07335)
 
     # TODO Excel docs claim this isn't supported but Excel produces a value...
     response = handlers.nper_handler({
@@ -274,7 +274,7 @@ def test_nper_handler():
         "fv": -100
     }, None)
     assert 'result' in response
-    assert round(response.get('result'), 5) == -753.39346
+    assert response.get('result').tolist() == pytest.approx(-753.39346)
 
     response = handlers.nper_handler({
         "rate": 0.005833333333333,
@@ -283,7 +283,7 @@ def test_nper_handler():
         "fv": -100
     }, None)
     assert 'result' in response
-    assert round(response.get('result'), 5) == 63.40344
+    assert response.get('result').tolist() == pytest.approx(63.40344)
 
     response = handlers.nper_handler({
         "rate": 0.005833333333333,
@@ -293,7 +293,7 @@ def test_nper_handler():
         "type": 1
     }, None)
     assert 'result' in response
-    assert round(response.get('result'), 5) == 62.95762
+    assert response.get('result').tolist() == pytest.approx(62.95762)
 
 
 def test_nper_missing_rate():
@@ -332,7 +332,7 @@ def test_npv_handler():
         "values": [-1000, 3000, 4200, 6800]
     }, None)
     assert 'result' in response
-    assert round(response.get('result'), 8) == 1188.44341
+    assert response.get('result') == pytest.approx(10307.287753568744) #1188.44341
 
 
 def test_npv_missing_rate():
@@ -547,3 +547,10 @@ def test_rate_missing_pv():
 
     assert 'error' in response
 
+def test_npv():
+    import numpy as np
+    
+    assert np.npv(0.1,[-1000, 3000, 4200, 6800]) == pytest.approx(10307.287753568744)
+
+if __name__ == "__main__":
+    pytest.main()

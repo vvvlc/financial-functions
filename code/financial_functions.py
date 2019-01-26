@@ -1,6 +1,7 @@
 # Additional financial functions not already provided by numpy
 
 import datetime
+from functools import reduce
 from scipy import optimize
 
 def fvschedule(principal, schedule=[]):
